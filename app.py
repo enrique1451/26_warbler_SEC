@@ -156,6 +156,11 @@ def users_show(user_id):
                 .order_by(Message.timestamp.desc())
                 .limit(100)
                 .all())
+
+    location = User.query.filter(User.location == user_id)
+    bio = User.query.filter(User.bio == user_id)
+
+
     return render_template('users/show.html', user=user, messages=messages)
 
 
@@ -218,6 +223,9 @@ def profile():
     """Update profile for current user."""
 
     # IMPLEMENT THIS
+    
+    
+
 
 
 @app.route('/users/delete', methods=["POST"])
