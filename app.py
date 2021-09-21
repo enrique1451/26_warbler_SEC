@@ -159,9 +159,10 @@ def users_show(user_id):
 
     location = User.query.filter(User.location == user_id)
     bio = User.query.filter(User.bio == user_id)
+    header_image = User.query.filter(User.header_image_url == user_id)
 
 
-    return render_template('users/show.html', user=user, messages=messages)
+    return render_template('users/show.html', user=user, messages=messages, location=location, bio=bio, header_image=header_image)
 
 
 @app.route('/users/<int:user_id>/following')
@@ -173,7 +174,8 @@ def show_following(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/following.html', user=user)
+    bio = User.query.filter(User.bio == user_id )
+    return render_template('users/following.html', user=user, bio = bio)
 
 
 @app.route('/users/<int:user_id>/followers')
@@ -185,7 +187,9 @@ def users_followers(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/followers.html', user=user)
+    bio = User.query.filter(User.bio == user_id )
+
+    return render_template('users/followers.html', user=user, bio=bio)
 
 
 @app.route('/users/follow/<int:follow_id>', methods=['POST'])
