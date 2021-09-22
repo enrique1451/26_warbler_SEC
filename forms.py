@@ -10,7 +10,18 @@ class MessageForm(FlaskForm):
 
 
 class UserAddForm(FlaskForm):
-    """Form for adding users."""
+    """Form for adding users users."""
+
+    username = StringField('Username', validators=[DataRequired()])
+    
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[Length(min=6)])
+    image_url = StringField('(Optional) Image URL')
+    location = StringField("(Optional) Location ")
+    user_bio = TextAreaField("User Bio", validators=[Length(max=200)])
+
+class UserEditForm(FlaskForm):
+    """Form for editing users."""
 
     username = StringField('Username', validators=[DataRequired()])
     
@@ -27,3 +38,5 @@ class LoginForm(FlaskForm):
 
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[Length(min=6)])
+
+
