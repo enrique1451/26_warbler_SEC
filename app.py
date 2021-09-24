@@ -222,25 +222,57 @@ def stop_following(follow_id):
     return redirect(f"/users/{g.user.id}/following")
 
 
-@app.route('/users/profile', methods=["GET", "POST"])
-def profile():
+@app.route('/users/profile/<int:user_id>', methods=["GET", "POST"])
+def profile(user_id):
+
     """Update profile for current user."""
+    form = UserEditForm()
+    user = User.query.get_or_404(user_id)
+    
+
+    form.username.data = user.username
+    form.email.data = user.email
+    form.image_url.data = user.image_url
+    form.location.data = user.location
+    form.bio.data = user.bio
+
     # Check if user is logged on
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    form = UserEditForm()
+    
 
-    return render_template("/users/edit.html",form=form)
+    
+    return render_template("/users/edit.html", form=form)
 
-    # user = User.query.get_or_404(user_id)
-    # username = User.query.filter(User.username == user_id)
-    # email = User.query.filter(User.email == user_id)
-    # image_url = User.query.filter(User.image_url == user_id)
-    # header_image = User.query.filter(User.header_image_url == user_id)
-    # bio = User.query.filter(User.bio == user_id)
-    # location = User.query.filter(User.location == user_id)
+
+    if request.method=="POST":
+        if form.validate_on_submit():
+            try:
+                user.username=form.username.data 
+                user.email = form.email.data 
+                user.image_url=form.image_url.data or User.image_url.default.arg 
+                user_id.location = form.location.data
+                user.bio= form.bio.data
+                db.add(user)
+                db.session.commit()
+
+            except IntegrityError:
+                flash("Username already taken", 'danger')
+                return render_template('users/signup.html', form=form)
+
+        flash("Form did not validate, fuck off")
+
+        
+
+        
+
+
+
+
+
+    
 
     
 
