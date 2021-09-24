@@ -226,44 +226,45 @@ def stop_following(follow_id):
 def profile(user_id):
 
     """Update profile for current user."""
+
     form = UserEditForm()
     user = User.query.get_or_404(user_id)
+
+    if request.method=="GET":
+        
+        form.username.data = user.username
+        form.email.data = user.email
+        form.image_url.data = user.image_url
+        form.location.data = user.location
+        form.bio.data = user.bio
+
+        # Check if user is logged on
+        if not g.user:
+            flash("Access unauthorized.", "danger")
+            return redirect("/")
     
-
-    form.username.data = user.username
-    form.email.data = user.email
-    form.image_url.data = user.image_url
-    form.location.data = user.location
-    form.bio.data = user.bio
-
-    # Check if user is logged on
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-
-    
-
-    
-    return render_template("/users/edit.html", form=form)
-
-
+        return render_template("/users/edit.html", form=form)
+       
     if request.method=="POST":
+    
         if form.validate_on_submit():
+            user.username=form.username.data
+            user.email = form.email.data 
+            user.image_url=form.image_url.data or User.image_url.default.arg 
+            user.location = form.location.data
+            user.bio= form.bio.data
+
+            print(request.form['username'])
+
             try:
-                user.username=form.username.data 
-                user.email = form.email.data 
-                user.image_url=form.image_url.data or User.image_url.default.arg 
-                user_id.location = form.location.data
-                user.bio= form.bio.data
-                db.add(user)
+                          
                 db.session.commit()
 
             except IntegrityError:
                 flash("Username already taken", 'danger')
-                return render_template('users/signup.html', form=form)
+                
 
-        flash("Form did not validate, fuck off")
-
+    return redirect(f'/users/{user_id}')
         
 
         
