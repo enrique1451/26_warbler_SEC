@@ -149,24 +149,6 @@ class User(db.Model):
         db.session.add(user)
         return user
 
-    # @classmethod
-    # def edit(cls, username, email,image_url,location, bio, password):
-    #     """Edit user profile."""
-        
-
-    #     """Hashes password and updates user in system.     """
-    #     user = User(
-    #         username=username,
-    #         email=email,
-    #         image_url=image_url,
-    #         location=location,
-    #         bio=bio,
-            
-    #     )
-    #     # password=hashed_pwd,
-
-    #     db.session.update(user)
-    #     return user
         
 
     @classmethod

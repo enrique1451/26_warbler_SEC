@@ -237,6 +237,8 @@ def profile(user_id):
         form.image_url.data = user.image_url
         form.location.data = user.location
         form.bio.data = user.bio
+        
+        
 
         # Check if user is logged on
         if not g.user:
@@ -246,23 +248,28 @@ def profile(user_id):
         return render_template("/users/edit.html", form=form)
        
     if request.method=="POST":
-    
+
+ 
         if form.validate_on_submit():
+            check_pwd = User.authenticate(user.username, form.password.data)
+
             user.username=form.username.data
             user.email = form.email.data 
             user.image_url=form.image_url.data or User.image_url.default.arg 
             user.location = form.location.data
             user.bio= form.bio.data
+        
+           
+        try:
+                        
+            db.session.commit()
 
-            print(request.form['username'])
-
-            try:
-                          
-                db.session.commit()
-
-            except IntegrityError:
-                flash("Username already taken", 'danger')
-                
+        except IntegrityError:
+            flash("Username already taken", 'danger')
+        
+        flash("Invalid Password", "danger")
+        return redirect('/logout')
+               
 
     return redirect(f'/users/{user_id}')
         
