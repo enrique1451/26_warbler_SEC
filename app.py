@@ -246,50 +246,50 @@ def profile(user_id):
             return redirect("/")
     
         return render_template("/users/edit.html", form=form)
+
+
        
     if request.method=="POST":
-
- 
-        if form.validate_on_submit():
-            check_pwd = User.authenticate(user.username, form.password.data)
-
+        
+        if form.validate_on_submit() and User.authenticate(user.username, form.password.data) :
             user.username=form.username.data
             user.email = form.email.data 
             user.image_url=form.image_url.data or User.image_url.default.arg 
             user.location = form.location.data
-            user.bio= form.bio.data
-        
-           
+            user.bio = form.bio.data
+            
         try:
-                        
             db.session.commit()
+            
+
+                
 
         except IntegrityError:
-            flash("Username already taken", 'danger')
+            flash("Username already taken try again", 'danger')
+            print("integrity error")
+            return redirect(f'/users/profile/{user_id}')
+
         
-        flash("Invalid Password", "danger")
-        return redirect('/logout')
+        return redirect(f'/users/{user_id}')
+
+
+
+
+
+
+
+
+
+            
+         
                
-
-    return redirect(f'/users/{user_id}')
         
 
+    
+                    
+
+            
         
-
-
-
-
-
-    
-
-    
-
-    
-
-    
-    
-    
-
 
 
 @app.route('/users/delete', methods=["POST"])
