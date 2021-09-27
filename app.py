@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Follows
 
 CURR_USER_KEY = "curr_user"
 
@@ -266,30 +266,12 @@ def profile(user_id):
 
         except IntegrityError:
             flash("Username already taken try again", 'danger')
-            print("integrity error")
             return redirect(f'/users/profile/{user_id}')
 
         
         return redirect(f'/users/{user_id}')
 
 
-
-
-
-
-
-
-
-            
-         
-               
-        
-
-    
-                    
-
-            
-        
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -370,8 +352,18 @@ def homepage():
     """
 
     if g.user:
+
+        # this is an Intrumented List. Have to use item's ids and get messages for each of them. 
+        cur_user_following = User.query.get(g.user.id).following  
+        
+        
+
+
+
+
         messages = (Message
                     .query
+                    
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
