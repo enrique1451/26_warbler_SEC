@@ -353,17 +353,17 @@ def homepage():
 
     if g.user:
 
-        # this is an Intrumented List. Have to use item's ids and get messages for each of them. 
-        cur_user_following = User.query.get(g.user.id).following  
+        user_id = g.user.id
+        list_followed_ids = []
+               # this is an Intrumented List. Have to use item's ids and get messages for each of them. 
+        cur_user_following = User.query.get(user_id).following  
         
-        
-
-
-
-
+        for item in cur_user_following:
+            list_followed_ids.append(item.id)
+            
         messages = (Message
                     .query
-                    
+                                                        
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
