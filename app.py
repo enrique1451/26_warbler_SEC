@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
-from models import db, connect_db, User, Message, Follows
+from models import db, connect_db, User, Message, Likes
 
 CURR_USER_KEY = "curr_user"
 
@@ -290,6 +290,12 @@ def delete_user():
     return redirect("/signup")
 
 
+
+
+
+
+
+
 ##############################################################################
 # Messages routes:
 
@@ -324,6 +330,8 @@ def messages_show(message_id):
     return render_template('messages/show.html', message=msg)
 
 
+
+
 @app.route('/messages/<int:message_id>/delete', methods=["POST"])
 def messages_destroy(message_id):
     """Delete a message."""
@@ -337,6 +345,30 @@ def messages_destroy(message_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
+
+    
+
+
+@app.route('/users/add_like/<int:message_id>', methods=["POST"])
+def likes(message_id):
+    if g.user:
+        
+        liked_msg = Message.query.get_or_404(message_id)
+        user_liked_msg = g.user.likes
+
+        if liked_msg in user_liked_msg:
+            g.user.likes = [like for like in user_liked_msg if user_liked_msg!= liked_msg]
+        else:
+            g.user.likes.append(liked_msg)
+            db.session.commit()
+
+        if liked_msg.user_id == g.user.id:
+            flash("Only third party messages can be liked")
+              
+
+
+        return redirect ("/")
+
 
 
 ##############################################################################
@@ -364,10 +396,25 @@ def homepage():
                     .limit(100)
                     .all())
 
+        print(messages)
+
+
+        
+          
+
+        
+
         return render_template('home.html', messages=messages)
 
     else:
         return render_template('home-anon.html')
+
+
+
+
+
+
+
 
 
 ##############################################################################
