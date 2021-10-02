@@ -348,15 +348,15 @@ def messages_destroy(message_id):
 
 
 @app.route('/users/<int:user_id>/likes', methods=["GET"])
-def show_likes():
+def show_likes(user_id):
 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    user: User.query.get_or_404(user_id)
+    user = User.query.get_or_404(user_id)
      #results in a list (instrumented 
-    render_template("/users/likes.html", user=user, likes=user.likes, length=len(likes))
+    return render_template("/users/likes.html", user=user, likes=user.likes)
     
 
 
